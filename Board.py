@@ -69,7 +69,7 @@ class Board:
             return
 
     def __str__(self):
-        return self.wrapStringRep(self.makeStringRep(self.pieces))
+        return self.wrapStringRep(self.makeUnicodeStringRep(self.pieces))
 
     def undoLastMove(self):
         lastMove, pieceTaken = self.history.pop()
@@ -194,7 +194,7 @@ class Board:
             "B": '♝',
             "K": '♚',	
             "Q": '♛',
-            "▲": '♟',
+            "P": '♟',
         }
 
         stringRep = ''
@@ -205,7 +205,7 @@ class Board:
                     if p.position == C(x, y):
                         piece = p
                         break
-                on_color = 'on_cyan' if y % 2 == x % 2 else 'on_yellow'
+                on_color = 'on_red' if y % 2 == x % 2 else 'on_blue'
                 pieceRep = colored('  ', on_color=on_color)
                 if piece:
                     side = piece.side

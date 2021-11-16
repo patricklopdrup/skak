@@ -4,12 +4,15 @@ import sys
 from AI import AI
 from Board import Board
 from InputParser import InputParser
+from debug import *
 
 WHITE = True
 BLACK = False
 
 
 def askForPlayerSide():
+    if debug:
+        return WHITE
     playerChoiceInput = input(
         "What side would you like to play as [wB]? ").lower()
     if 'w' in playerChoiceInput:
@@ -21,6 +24,8 @@ def askForPlayerSide():
 
 
 def askForDepthOfAI():
+    if debug:
+        return 1
     depthInput = 2
     try:
         depthInput = int(input("How deep should the AI look for moves?\n"
@@ -114,7 +119,7 @@ def startGame(board, playerSide, ai):
                 continue
             elif command.lower() == 'r':
                 move = getRandomMove(board, parser)
-            elif command.lower() == 'exit' or command.lower() == 'quit':
+            elif command.lower() == 'exit' or command.lower() == 'quit' or command.lower() == 'q':
                 return
             try:
                 if command.lower() != 'r':
