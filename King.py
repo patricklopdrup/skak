@@ -9,7 +9,7 @@ BLACK = False
 class King (Piece):
 
     stringRep = 'K'
-    value = 100
+    value = 0
 
     def __init__(self, board, side, position,  movesMade=0):
         super(King, self).__init__(board, side, position)

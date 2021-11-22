@@ -1,13 +1,16 @@
 import random
 import sys
+import time
 
 from AI import AI
 from Board import Board
+from CustomAi import CustomAI
 from InputParser import InputParser
 from debug import *
 
 WHITE = True
 BLACK = False
+TIME_LIMIT_SEC = 10
 
 
 def askForPlayerSide():
@@ -25,7 +28,7 @@ def askForPlayerSide():
 
 def askForDepthOfAI():
     if debug:
-        return 1
+        return 2
     depthInput = 2
     try:
         depthInput = int(input("How deep should the AI look for moves?\n"
@@ -83,8 +86,9 @@ def undoLastTwoMoves(board):
         board.undoLastMove()
 
 
-def startGame(board, playerSide, ai):
+def startGame(board: Board, playerSide, ai: CustomAI):
     parser = InputParser(board, playerSide)
+    hit_time_limit_counter = 0
     while True:
         print()
         print(board)
@@ -131,7 +135,33 @@ def startGame(board, playerSide, ai):
 
         else:
             print("AI thinking...")
-            move = ai.getBestMove()
+            #move = ai.getBestMove()
+
+            # Set dynamic depth for the AI
+            new_depth = -1
+            if hit_time_limit_counter >= 2:
+                new_depth = ai.depth - 1
+                hit_time_limit_counter = 0
+            elif hit_time_limit_counter <= -2:
+                new_depth = ai.depth + 1
+                hit_time_limit_counter = 0
+            
+            print(f"Time limit hit: {hit_time_limit_counter}. Ny depth: {new_depth}")
+            
+            start_time = time.time()
+            move = ai.bestMoveMinMax(new_depth)
+            end_time = time.time()
+            ai_total_time = end_time - start_time
+            # AI used less than 40% of the time it had
+            if ai_total_time <= TIME_LIMIT_SEC * 0.4:
+                hit_time_limit_counter -= 2
+            # AI used less than 75% of the time it had
+            elif ai_total_time <= TIME_LIMIT_SEC * 0.75:
+                hit_time_limit_counter -= 1
+            # If the AI hit the time limit
+            elif ai_total_time >= TIME_LIMIT_SEC:
+                hit_time_limit_counter += 2
+
             move.notation = parser.notationForMove(move)
             makeMove(move, board)
 
@@ -188,7 +218,9 @@ def main():
             playerSide = askForPlayerSide()
             print()
             aiDepth = askForDepthOfAI()
-            opponentAI = AI(board, not playerSide, aiDepth)
+            #opponentAI = AI(board, not playerSide, aiDepth)
+            # Custom AI class
+            opponentAI = CustomAI(board, not playerSide, aiDepth, 10)
             startGame(board, playerSide, opponentAI)
     except KeyboardInterrupt:
         sys.exit()

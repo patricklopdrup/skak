@@ -8,7 +8,7 @@ BLACK = False
 class Queen(Piece):
 
     stringRep = 'Q'
-    value = 9
+    value = 10
 
     def __init__(self, board, side, position, movesMade=0):
         super(Queen, self).__init__(board, side, position)
