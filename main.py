@@ -10,7 +10,7 @@ from debug import *
 
 WHITE = True
 BLACK = False
-TIME_LIMIT_SEC = 10
+TIME_LIMIT_SEC = 15
 
 
 def askForPlayerSide():
@@ -28,7 +28,7 @@ def askForPlayerSide():
 
 def askForDepthOfAI():
     if debug:
-        return 2
+        return 3
     depthInput = 2
     try:
         depthInput = int(input("How deep should the AI look for moves?\n"
@@ -220,7 +220,7 @@ def main():
             aiDepth = askForDepthOfAI()
             #opponentAI = AI(board, not playerSide, aiDepth)
             # Custom AI class
-            opponentAI = CustomAI(board, not playerSide, aiDepth, 10)
+            opponentAI = CustomAI(board, not playerSide, aiDepth, TIME_LIMIT_SEC)
             startGame(board, playerSide, opponentAI)
     except KeyboardInterrupt:
         sys.exit()
