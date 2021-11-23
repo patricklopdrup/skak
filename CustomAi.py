@@ -127,7 +127,7 @@ class CustomAI:
                 if beta <= alpha:
                     pruning_counter += 1
                     break
-            return max_score
+            return alpha
 
         # For black aka minimizer
         else:
@@ -148,24 +148,21 @@ class CustomAI:
                 if beta <= alpha:
                     pruning_counter += 1
                     break
-            return min_score
+            return beta
 
 
     '''
     Positive numbers for white. Negative number for black
     '''
     def scoreBoard(self, board: Board, side: bool):
-        if side == WHITE:
-            point = board.getPointAdvantageOfSide(WHITE)
-            if point > 0:
-                print(f"hvid point: {point}")
-            return point
-        else:
-            point = board.getPointAdvantageOfSide(BLACK)
-            if point < 0:
-                print(f"sort point: {point}")
-            return point
+        # if side == WHITE:
+        #     return board.getPointAdvantageOfSide(WHITE)
+        # else:
+        #     return board.getPointAdvantageOfSide(BLACK)
+        
         # if side == WHITE:
         #     return board.getPointValueOfSide(WHITE)
         # else:
         #     return -(board.getPointValueOfSide(BLACK))
+
+        return board.getPointAdvantageOfSide(WHITE)

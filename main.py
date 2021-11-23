@@ -15,7 +15,7 @@ TIME_LIMIT_SEC = 15
 
 def askForPlayerSide():
     if debug:
-        return WHITE
+        return BLACK
     playerChoiceInput = input(
         "What side would you like to play as [wB]? ").lower()
     if 'w' in playerChoiceInput:
@@ -146,7 +146,11 @@ def startGame(board: Board, playerSide, ai: CustomAI):
                 new_depth = ai.depth + 1
                 hit_time_limit_counter = 0
             
-            print(f"Time limit hit: {hit_time_limit_counter}. Ny depth: {new_depth}")
+            print(f"Time limit hit: {hit_time_limit_counter}. ", end='')
+            if new_depth != -1:
+                print(f"Ny depth: {new_depth}")
+            else:
+                print(f"Depth: {ai.depth}")
             
             start_time = time.time()
             move = ai.bestMoveMinMax(new_depth)
