@@ -1,3 +1,4 @@
+from enum import auto
 import random
 import sys
 import time
@@ -88,7 +89,7 @@ def undoLastTwoMoves(board):
 
 def startGame(board: Board, playerSide, ai: CustomAI):
     parser = InputParser(board, playerSide)
-    hit_time_limit_counter = 0
+    total_moves = 0
     while True:
         print()
         print(board)
@@ -98,6 +99,7 @@ def startGame(board: Board, playerSide, ai: CustomAI):
                 print("Checkmate, you lost")
             else:
                 print("Checkmate! You won!")
+            print(f"Antal hele træk: {total_moves}.")
             return
 
         if board.isStalemate():
@@ -109,65 +111,50 @@ def startGame(board: Board, playerSide, ai: CustomAI):
 
         if board.currentSide == playerSide:
             # printPointAdvantage(board)
-            move = None
-            command = input("It's your move."
-                            " Type '?' for options. ? ")
-            if command.lower() == 'u':
-                undoLastTwoMoves(board)
-                continue
-            elif command.lower() == '?':
-                printCommandOptions()
-                continue
-            elif command.lower() == 'l':
-                printAllLegalMoves(board, parser)
-                continue
-            elif command.lower() == 'r':
+            if autoplay:
                 move = getRandomMove(board, parser)
-            elif command.lower() == 'exit' or command.lower() == 'quit' or command.lower() == 'q':
-                return
-            try:
-                if command.lower() != 'r':
-                    move = parser.parse(command)
-            except ValueError as error:
-                print("%s" % error)
-                continue
+            else:
+                move = None
+                command = input("It's your move."
+                                " Type '?' for options. ? ")
+                if command.lower() == 'u':
+                    undoLastTwoMoves(board)
+                    continue
+                elif command.lower() == '?':
+                    printCommandOptions()
+                    continue
+                elif command.lower() == 'l':
+                    printAllLegalMoves(board, parser)
+                    continue
+                elif command.lower() == 'r':
+                    move = getRandomMove(board, parser)
+                elif command.lower() == 'exit' or command.lower() == 'quit' or command.lower() == 'q':
+                    return
+                try:
+                    if command.lower() != 'r':
+                        move = parser.parse(command)
+                except ValueError as error:
+                    print("%s" % error)
+                    continue
+
             makeMove(move, board)
 
         else:
             print("AI thinking...")
             #move = ai.getBestMove()
 
-            # Set dynamic depth for the AI
-            new_depth = -1
-            if hit_time_limit_counter >= 2:
-                new_depth = ai.depth - 1
-                hit_time_limit_counter = 0
-            elif hit_time_limit_counter <= -2:
-                new_depth = ai.depth + 1
-                hit_time_limit_counter = 0
-            
-            print(f"Time limit hit: {hit_time_limit_counter}. ", end='')
-            if new_depth != -1:
-                print(f"Ny depth: {new_depth}")
-            else:
-                print(f"Depth: {ai.depth}")
-            
-            start_time = time.time()
-            move = ai.bestMoveMinMax(new_depth)
-            end_time = time.time()
-            ai_total_time = end_time - start_time
-            # AI used less than 40% of the time it had
-            if ai_total_time <= TIME_LIMIT_SEC * 0.4:
-                hit_time_limit_counter -= 2
-            # AI used less than 75% of the time it had
-            elif ai_total_time <= TIME_LIMIT_SEC * 0.75:
-                hit_time_limit_counter -= 1
-            # If the AI hit the time limit
-            elif ai_total_time >= TIME_LIMIT_SEC:
-                hit_time_limit_counter += 2
+            move = ai.bestMoveMinMax()
 
             move.notation = parser.notationForMove(move)
-            makeMove(move, board)
+            try:
+                makeMove(move, board)
+            except:
+                print(f"FEJL FEJL FEJL: Move: {move}")
+                print(f"Moves:")
+                for m in board.getAllMovesLegal(ai.side):
+                    print(m)
+        
+        total_moves += 1
 
 def twoPlayerGame(board):
     parserWhite = InputParser(board, WHITE)
@@ -224,7 +211,7 @@ def main():
             aiDepth = askForDepthOfAI()
             #opponentAI = AI(board, not playerSide, aiDepth)
             # Custom AI class
-            opponentAI = CustomAI(board, not playerSide, aiDepth, TIME_LIMIT_SEC)
+            opponentAI = CustomAI(board, not playerSide)
             startGame(board, playerSide, opponentAI)
     except KeyboardInterrupt:
         sys.exit()

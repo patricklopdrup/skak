@@ -1,1 +1,2 @@
 debug = True
+autoplay = False
