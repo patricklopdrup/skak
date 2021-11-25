@@ -8,7 +8,7 @@ BLACK = False
 class Queen(Piece):
 
     stringRep = 'Q'
-    value = 10
+    value = 90
     score_table = [
         [-20,-10,-10, -5, -5,-10,-10,-20],
         [-10,  0,  0,  0,  0,  0,  0,-10],

@@ -8,7 +8,7 @@ BLACK = False
 class Rook (Piece):
 
     stringRep = 'R'
-    value = 5
+    value = 50
     score_table = [
         [ 0,  0,  0,  0,  0,  0,  0,  0],
         [ 5, 10, 10, 10, 10, 10, 10,  5],

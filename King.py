@@ -9,7 +9,7 @@ BLACK = False
 class King (Piece):
 
     stringRep = 'K'
-    value = 100
+    value = 2000
     score_table = [
         [-30,-40,-40,-50,-50,-40,-40,-30],
         [-30,-40,-40,-50,-50,-40,-40,-30],

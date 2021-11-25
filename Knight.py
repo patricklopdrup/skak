@@ -9,7 +9,7 @@ BLACK = False
 class Knight(Piece):
 
     stringRep = 'N'
-    value = 3
+    value = 32
     score_table = [
         [-50,-40,-30,-30,-30,-30,-40,-50],
         [-40,-20,  0,  0,  0,  0,-20,-40],

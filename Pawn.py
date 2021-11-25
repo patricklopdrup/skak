@@ -13,7 +13,7 @@ BLACK = False
 class Pawn(Piece):
 
     stringRep = 'P'
-    value = 1
+    value = 10
     # Piece-Square Table
     score_table = [
         [0,  0,  0,  0,  0,  0,  0,  0],
@@ -25,6 +25,7 @@ class Pawn(Piece):
         [5, 10, 10,-20,-20, 10, 10,  5],
         [0,  0,  0,  0,  0,  0,  0,  0]
     ]
+
 
     def __init__(self, board, side, position,  movesMade=0):
         super(Pawn, self).__init__(board, side, position)

@@ -8,7 +8,7 @@ BLACK = False
 class Bishop (Piece):
 
     stringRep = 'B'
-    value = 3
+    value = 33
     score_table = [
         [-20,-10,-10,-10,-10,-10,-10,-20],
         [-10,  0,  0,  0,  0,  0,  0,-10],
