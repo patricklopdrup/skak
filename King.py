@@ -10,10 +10,26 @@ class King (Piece):
 
     stringRep = 'K'
     value = 100
+    score_table = [
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-20,-30,-30,-40,-40,-30,-30,-20],
+        [-10,-20,-20,-20,-20,-20,-20,-10],
+        [ 20, 20,  0,  0,  0,  0, 20, 20],
+        [ 20, 30, 10,  0,  0, 10, 30, 20]
+    ]
 
     def __init__(self, board, side, position,  movesMade=0):
         super(King, self).__init__(board, side, position)
         self.movesMade = movesMade
+
+
+    def getValue(self, coor: C):
+        table_val = self.score_table[coor[0]][coor[1]]
+        return self.value + table_val
+
 
     def getPossibleMoves(self):
         currentPos = self.position

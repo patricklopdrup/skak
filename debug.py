@@ -1,2 +1,3 @@
 debug = True
-autoplay = False
+autoplay = True
+usePieceVal = False

@@ -14,10 +14,27 @@ class Pawn(Piece):
 
     stringRep = 'P'
     value = 1
+    # Piece-Square Table
+    score_table = [
+        [0,  0,  0,  0,  0,  0,  0,  0],
+        [50, 50, 50, 50, 50, 50, 50, 50],
+        [10, 10, 20, 30, 30, 20, 10, 10],
+        [5,  5, 10, 25, 25, 10,  5,  5],
+        [0,  0,  0, 20, 20,  0,  0,  0],
+        [5, -5,-10,  0,  0,-10, -5,  5],
+        [5, 10, 10,-20,-20, 10, 10,  5],
+        [0,  0,  0,  0,  0,  0,  0,  0]
+    ]
 
     def __init__(self, board, side, position,  movesMade=0):
         super(Pawn, self).__init__(board, side, position)
         self.movesMade = movesMade
+
+
+    def getValue(self, coor: C):
+        table_val = self.score_table[coor[0]][coor[1]]
+        return self.value + table_val
+
 
     # @profile
     def getPossibleMoves(self):

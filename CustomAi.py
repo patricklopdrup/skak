@@ -14,7 +14,7 @@ BLACK = False
 class CustomAI:
 
     start_time = None
-    max_time_sec = 10
+    max_time_sec = 7
     init_depth = 1
     current_depth = 0
     timeout = False
@@ -189,4 +189,5 @@ class CustomAI:
         # else:
         #     return -(board.getPointValueOfSide(BLACK))
 
-        return board.getPointAdvantageOfSide(WHITE)
+        #return board.getPointAdvantageOfSide(WHITE)
+        return board.getPointValueWithTable(WHITE)
