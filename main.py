@@ -1,18 +1,24 @@
+from enum import auto
 import random
 import sys
+import time
 
 from AI import AI
 from Board import Board
+from CustomAi import CustomAI
 from InputParser import InputParser
+from Move import Move
+from Piece import Piece
 from debug import *
 
 WHITE = True
 BLACK = False
+TIME_LIMIT_SEC = 15
 
 
 def askForPlayerSide():
     if debug:
-        return WHITE
+        return BLACK
     playerChoiceInput = input(
         "What side would you like to play as [wB]? ").lower()
     if 'w' in playerChoiceInput:
@@ -25,7 +31,7 @@ def askForPlayerSide():
 
 def askForDepthOfAI():
     if debug:
-        return 1
+        return 3
     depthInput = 2
     try:
         depthInput = int(input("How deep should the AI look for moves?\n"
@@ -83,8 +89,10 @@ def undoLastTwoMoves(board):
         board.undoLastMove()
 
 
-def startGame(board, playerSide, ai):
+def startGame(board: Board, playerSide, ai: CustomAI):
     parser = InputParser(board, playerSide)
+    ai_parser = InputParser(board, not playerSide)
+    total_moves = 0
     while True:
         print()
         print(board)
@@ -94,6 +102,7 @@ def startGame(board, playerSide, ai):
                 print("Checkmate, you lost")
             else:
                 print("Checkmate! You won!")
+            print(f"Antal hele træk: {total_moves}.")
             return
 
         if board.isStalemate():
@@ -105,35 +114,57 @@ def startGame(board, playerSide, ai):
 
         if board.currentSide == playerSide:
             # printPointAdvantage(board)
-            move = None
-            command = input("It's your move."
-                            " Type '?' for options. ? ")
-            if command.lower() == 'u':
-                undoLastTwoMoves(board)
-                continue
-            elif command.lower() == '?':
-                printCommandOptions()
-                continue
-            elif command.lower() == 'l':
-                printAllLegalMoves(board, parser)
-                continue
-            elif command.lower() == 'r':
+            if autoplay:
                 move = getRandomMove(board, parser)
-            elif command.lower() == 'exit' or command.lower() == 'quit' or command.lower() == 'q':
-                return
-            try:
-                if command.lower() != 'r':
-                    move = parser.parse(command)
-            except ValueError as error:
-                print("%s" % error)
-                continue
+            else:
+                move = None
+                command = input("It's your move."
+                                " Type '?' for options. ? ")
+                if command.lower() == 'u':
+                    undoLastTwoMoves(board)
+                    continue
+                elif command.lower() == '?':
+                    printCommandOptions()
+                    continue
+                elif command.lower() == 'l':
+                    printAllLegalMoves(board, parser)
+                    continue
+                elif command.lower() == 'r':
+                    move = getRandomMove(board, parser)
+                elif command.lower() == 'exit' or command.lower() == 'quit' or command.lower() == 'q':
+                    return
+                try:
+                    if command.lower() != 'r':
+                        move = parser.parse(command)
+                except ValueError as error:
+                    print("%s" % error)
+                    continue
+
             makeMove(move, board)
 
         else:
             print("AI thinking...")
-            move = ai.getBestMove()
-            move.notation = parser.notationForMove(move)
-            makeMove(move, board)
+            #move = ai.getBestMove()
+
+            # For start game move pawn
+            if total_moves == 0:
+                print(ai.side)
+                if ai.side == WHITE:
+                    move = ai_parser.parse('e4')
+                else:
+                    move = ai_parser.parse('e5')
+            else:
+                move = ai.bestMoveMinMax()
+                move.notation = parser.notationForMove(move)
+            try:
+                makeMove(move, board)
+            except:
+                print(f"FEJL FEJL FEJL: Move: {move}")
+                print(f"Moves:")
+                for m in board.getAllMovesLegal(ai.side):
+                    print(m)
+        
+        total_moves += 1
 
 def twoPlayerGame(board):
     parserWhite = InputParser(board, WHITE)
@@ -188,7 +219,9 @@ def main():
             playerSide = askForPlayerSide()
             print()
             aiDepth = askForDepthOfAI()
-            opponentAI = AI(board, not playerSide, aiDepth)
+            #opponentAI = AI(board, not playerSide, aiDepth)
+            # Custom AI class
+            opponentAI = CustomAI(board, not playerSide)
             startGame(board, playerSide, opponentAI)
     except KeyboardInterrupt:
         sys.exit()

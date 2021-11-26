@@ -5,6 +5,7 @@ from Move import Move
 from Piece import Piece
 from Queen import Queen
 from Rook import Rook
+import numpy
 
 WHITE = True
 BLACK = False
@@ -13,11 +14,46 @@ BLACK = False
 class Pawn(Piece):
 
     stringRep = 'P'
-    value = 1
+    value = 100
+    # Piece-Square Table
+    score_table_white = numpy.array([
+        [0,  0,  0,  0,  0,  0,  0,  0],
+        [50, 50, 50, 50, 50, 50, 50, 50],
+        [10, 10, 20, 30, 30, 20, 10, 10],
+        [5,  5, 10, 25, 25, 10,  5,  5],
+        [0,  0,  0, 20, 20,  0,  0,  0],
+        [5, -5,-10,  0,  0,-10, -5,  5],
+        [5, 10, 10,-20,-20, 10, 10,  5],
+        [0,  0,  0,  0,  0,  0,  0,  0]
+    ])
+
+    score_table_black = numpy.array([
+        [0,  0,  0,  0,  0,  0,  0,  0],
+        [5, 10, 10,-20,-20, 10, 10,  5],
+        [5, -5,-10,  0,  0,-10, -5,  5],
+        [0,  0,  0, 20, 20,  0,  0,  0],
+        [5,  5, 10, 25, 25, 10,  5,  5],
+        [10, 10, 20, 30, 30, 20, 10, 10],
+        [50, 50, 50, 50, 50, 50, 50, 50],
+        [0,  0,  0,  0,  0,  0,  0,  0]
+    ])
+
 
     def __init__(self, board, side, position,  movesMade=0):
         super(Pawn, self).__init__(board, side, position)
         self.movesMade = movesMade
+
+
+    def getValue(self, coor: C, side: bool):
+        # Reverse x and y so it matches the Board
+        x = coor[1]
+        y = coor[0]
+        if side == WHITE:
+            table_val = self.score_table_white[x,y]
+        else:
+            table_val = self.score_table_black[x,y]
+        return self.value + table_val
+
 
     # @profile
     def getPossibleMoves(self):
