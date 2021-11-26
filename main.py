@@ -10,6 +10,7 @@ from InputParser import InputParser
 from Move import Move
 from Piece import Piece
 from debug import *
+from Zobrist import *
 
 WHITE = True
 BLACK = False
@@ -93,6 +94,11 @@ def startGame(board: Board, playerSide, ai: CustomAI):
     parser = InputParser(board, playerSide)
     ai_parser = InputParser(board, not playerSide)
     total_moves = 0
+
+    print("Hej")
+    init_table()
+    print(compute_hash(board))
+
     while True:
         print()
         print(board)
@@ -113,7 +119,6 @@ def startGame(board: Board, playerSide, ai: CustomAI):
             return
 
         if board.currentSide == playerSide:
-            # printPointAdvantage(board)
             if autoplay:
                 move = getRandomMove(board, parser)
             else:
