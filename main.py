@@ -7,6 +7,8 @@ from AI import AI
 from Board import Board
 from CustomAi import CustomAI
 from InputParser import InputParser
+from Move import Move
+from Piece import Piece
 from debug import *
 
 WHITE = True
@@ -89,6 +91,7 @@ def undoLastTwoMoves(board):
 
 def startGame(board: Board, playerSide, ai: CustomAI):
     parser = InputParser(board, playerSide)
+    ai_parser = InputParser(board, not playerSide)
     total_moves = 0
     while True:
         print()
@@ -143,9 +146,16 @@ def startGame(board: Board, playerSide, ai: CustomAI):
             print("AI thinking...")
             #move = ai.getBestMove()
 
-            move = ai.bestMoveMinMax()
-
-            move.notation = parser.notationForMove(move)
+            # For start game move pawn
+            if total_moves == 0:
+                print(ai.side)
+                if ai.side == WHITE:
+                    move = ai_parser.parse('e4')
+                else:
+                    move = ai_parser.parse('e5')
+            else:
+                move = ai.bestMoveMinMax()
+                move.notation = parser.notationForMove(move)
             try:
                 makeMove(move, board)
             except:

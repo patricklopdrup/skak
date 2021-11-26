@@ -1,6 +1,7 @@
 from Coordinate import Coordinate as C
 from Move import Move
 from Piece import Piece
+import numpy
 
 WHITE = True
 BLACK = False
@@ -9,8 +10,8 @@ BLACK = False
 class King (Piece):
 
     stringRep = 'K'
-    value = 2000
-    score_table = [
+    value = 20000
+    score_table_white = numpy.array([
         [-30,-40,-40,-50,-50,-40,-40,-30],
         [-30,-40,-40,-50,-50,-40,-40,-30],
         [-30,-40,-40,-50,-50,-40,-40,-30],
@@ -19,15 +20,32 @@ class King (Piece):
         [-10,-20,-20,-20,-20,-20,-20,-10],
         [ 20, 20,  0,  0,  0,  0, 20, 20],
         [ 20, 30, 10,  0,  0, 10, 30, 20]
-    ]
+    ])
+
+    score_table_black = numpy.array([
+        [ 20, 30, 10,  0,  0, 10, 30, 20],
+        [ 20, 20,  0,  0,  0,  0, 20, 20],
+        [-10,-20,-20,-20,-20,-20,-20,-10],
+        [-20,-30,-30,-40,-40,-30,-30,-20],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30],
+        [-30,-40,-40,-50,-50,-40,-40,-30]
+    ])
 
     def __init__(self, board, side, position,  movesMade=0):
         super(King, self).__init__(board, side, position)
         self.movesMade = movesMade
 
 
-    def getValue(self, coor: C):
-        table_val = self.score_table[coor[0]][coor[1]]
+    def getValue(self, coor: C, side: bool):
+        # Reverse x and y so it matches the Board
+        x = coor[1]
+        y = coor[0]
+        if side == WHITE:
+            table_val = self.score_table_white[x,y]
+        else:
+            table_val = self.score_table_black[x,y]
         return self.value + table_val
 
 

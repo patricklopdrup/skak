@@ -456,7 +456,7 @@ class Board:
             if piece.side == side:
                 if not usePieceVal:
                     piece.value = 0
-                points += piece.getValue(piece.position)
+                points += piece.getValue(piece.position, side)
         return points
 
     def getPointAdvantageWithTable(self, side):

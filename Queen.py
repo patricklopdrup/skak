@@ -1,5 +1,6 @@
 from Coordinate import Coordinate as C
 from Piece import Piece
+import numpy
 
 WHITE = True
 BLACK = False
@@ -8,8 +9,8 @@ BLACK = False
 class Queen(Piece):
 
     stringRep = 'Q'
-    value = 90
-    score_table = [
+    value = 900
+    score_table_white = numpy.array([
         [-20,-10,-10, -5, -5,-10,-10,-20],
         [-10,  0,  0,  0,  0,  0,  0,-10],
         [-10,  0,  5,  5,  5,  5,  0,-10],
@@ -18,15 +19,32 @@ class Queen(Piece):
         [-10,  5,  5,  5,  5,  5,  0,-10],
         [-10,  0,  5,  0,  0,  0,  0,-10],
         [-20,-10,-10, -5, -5,-10,-10,-20]
-    ]
+    ])
+
+    score_table_black = numpy.array([
+        [-20,-10,-10, -5, -5,-10,-10,-20],
+        [-10,  0,  5,  0,  0,  0,  0,-10],
+        [-10,  5,  5,  5,  5,  5,  0,-10],
+        [  0,  0,  5,  5,  5,  5,  0, -5],
+        [ -5,  0,  5,  5,  5,  5,  0, -5],
+        [-10,  0,  5,  5,  5,  5,  0,-10],
+        [-10,  0,  0,  0,  0,  0,  0,-10],
+        [-20,-10,-10, -5, -5,-10,-10,-20]
+    ])
 
     def __init__(self, board, side, position, movesMade=0):
         super(Queen, self).__init__(board, side, position)
         self.movesMade = movesMade
 
 
-    def getValue(self, coor: C):
-        table_val = self.score_table[coor[0]][coor[1]]
+    def getValue(self, coor: C, side: bool):
+        # Reverse x and y so it matches the Board
+        x = coor[1]
+        y = coor[0]
+        if side == WHITE:
+            table_val = self.score_table_white[x,y]
+        else:
+            table_val = self.score_table_black[x,y]
         return self.value + table_val
 
 

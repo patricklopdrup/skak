@@ -51,6 +51,9 @@ class CustomAI:
         self.pruning_counter = 0
         self.state_counter = 0
         self.best_move_in_layer = 0
+
+        
+
         for d in range(100):
             # Update global best move only when completely done with a search tree
             if self.global_best_move != self.best_move:
@@ -190,4 +193,4 @@ class CustomAI:
         #     return -(board.getPointValueOfSide(BLACK))
 
         #return board.getPointAdvantageOfSide(WHITE)
-        return board.getPointValueWithTable(WHITE)
+        return board.getPointAdvantageWithTable(WHITE)
