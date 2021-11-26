@@ -7,6 +7,8 @@ from Pawn import Pawn
 from Queen import Queen
 from Rook import Rook
 from termcolor import colored
+from Piece import Piece
+from debug import *
 
 WHITE = True
 BLACK = False
@@ -447,14 +449,25 @@ class Board:
                 points += piece.value
         return points
 
+    def getPointValueWithTable(self, side):
+        points = 0
+        piece: Piece
+        for piece in self.pieces:
+            if piece.side == side:
+                if not usePieceVal:
+                    piece.value = 0
+                points += piece.getValue(piece.position, side)
+        return points
+
+    def getPointAdvantageWithTable(self, side):
+        pointAdvantage = self.getPointValueWithTable(side) - \
+            self.getPointValueWithTable(not side)
+        return pointAdvantage
+
     def getPointAdvantageOfSide(self, side):
         pointAdvantage = self.getPointValueOfSide(side) - \
             self.getPointValueOfSide(not side)
         return pointAdvantage
-        if side == WHITE:
-            return self.points
-        if side == BLACK:
-            return -self.points
 
     def getAllMovesUnfiltered(self, side, includeKing=True):
         unfilteredMoves = []
