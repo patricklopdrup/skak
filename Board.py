@@ -9,6 +9,7 @@ from Rook import Rook
 from termcolor import colored
 from Piece import Piece
 from debug import *
+from Zobrist import *
 
 WHITE = True
 BLACK = False
@@ -24,6 +25,9 @@ class Board:
         self.currentSide = WHITE
         self.movesMade = 0
         self.checkmate = False
+        # Init the zobrist hash table
+        init_table()
+
 
         if not mateInOne and not castleBoard and not passant and not promotion:
             self.pieces.extend([Rook(self, BLACK, C(0, 7)),
@@ -498,5 +502,14 @@ class Board:
         legalMoves = []
         for move in unfilteredMoves:
             if self.moveIsLegal(move):
+                legalMoves.append(move)
+        return legalMoves
+
+    
+    def getAllFirstMovesLegal(self, side):
+        unfilteredMoves = list(self.getAllMovesUnfiltered(side))
+        legalMoves = []
+        for move in unfilteredMoves:
+            if self.moveIsLegal(move) and move.piece.stringRep == 'P':
                 legalMoves.append(move)
         return legalMoves

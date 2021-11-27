@@ -95,10 +95,8 @@ def startGame(board: Board, playerSide, ai: CustomAI):
     ai_parser = InputParser(board, not playerSide)
     total_moves = 0
 
-    print("Hej")
-    init_table()
-    print(compute_hash(board))
-
+    print(f"Hash: {compute_hash(board)}")
+    print(f"Score: {board.getPointAdvantageWithTable(WHITE)}")
     while True:
         print()
         print(board)
@@ -152,14 +150,14 @@ def startGame(board: Board, playerSide, ai: CustomAI):
             #move = ai.getBestMove()
 
             # For start game move pawn
-            if total_moves == 0:
+            if hard_code_first_move and total_moves == 0:
                 print(ai.side)
                 if ai.side == WHITE:
                     move = ai_parser.parse('e4')
                 else:
                     move = ai_parser.parse('e5')
             else:
-                move = ai.bestMoveMinMax()
+                move = ai.bestMoveMinMax(total_moves)
                 move.notation = parser.notationForMove(move)
             try:
                 makeMove(move, board)

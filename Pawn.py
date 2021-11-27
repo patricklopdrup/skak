@@ -48,7 +48,7 @@ class Pawn(Piece):
         # Reverse x and y so it matches the Board
         x = coor[1]
         y = coor[0]
-        if side == WHITE:
+        if side == BLACK:
             table_val = self.score_table_white[x,y]
         else:
             table_val = self.score_table_black[x,y]

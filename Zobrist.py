@@ -1,14 +1,13 @@
 import numpy
 import random
 import math
-from Board import Board
 from Piece import Piece
 
 WHITE = True
 BLACK = False
 
 ZobristTable = numpy.zeros((8,8,12))
-
+#https://www.youtube.com/watch?v=wdkf6i1fL5c&t=106s
 def index_of(piece_str_rep: str, side: bool):
     if side == WHITE:
         if piece_str_rep == 'P':
@@ -45,7 +44,7 @@ def init_table():
                 ZobristTable[i][j][k] = random.randint(0, 2**64-1)
 
 
-def compute_hash(board: Board):
+def compute_hash(board):
     hash = 0
     pieces = board.pieces
     p: Piece

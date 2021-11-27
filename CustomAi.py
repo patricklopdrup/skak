@@ -3,10 +3,14 @@ from sys import maxsize
 import time
 import math
 
+from numpy.core.fromnumeric import transpose
+
 from Coordinate import Coordinate as C
 from Board import Board
 from Move import Move
 from Piece import Piece
+from TranspositionTable import TranspositionTable
+from Zobrist import compute_hash
 
 WHITE = True
 BLACK = False
@@ -14,7 +18,7 @@ BLACK = False
 class CustomAI:
 
     start_time = None
-    max_time_sec = 7
+    max_time_sec = 10
     init_depth = 1
     current_depth = 0
     timeout = False
@@ -42,17 +46,18 @@ class CustomAI:
     '''
     Helper function to find the best move with minimax
     '''
-    def bestMoveMinMax(self):
+    def bestMoveMinMax(self, total_moves):
         self.best_move = Move(Piece(self.board, WHITE, C(0,0)), 0,1)
         self.global_best_move = Move(Piece(self.board, WHITE, C(0,0)), 0,1)
         self.timeout = False
-        self.start_time = time.time()
         self.current_depth = 0
         self.pruning_counter = 0
         self.state_counter = 0
         self.best_move_in_layer = 0
-
-        
+        self.total_moves = total_moves
+        # init transposition table
+        self.trans_table = TranspositionTable
+        self.start_time = time.time()
 
         for d in range(100):
             # Update global best move only when completely done with a search tree
@@ -63,12 +68,13 @@ class CustomAI:
             self.current_depth = self.init_depth + d
 
             self.alphaBeta(self.board, self.current_depth, -math.inf, math.inf, self.side)
+            #self.negamax(self.board, self.current_depth, -math.inf, math.inf, self.side)
             if self.timeout:
                 break
 
         print(f"Kiggede på {self.state_counter} spil på {time.time() - self.start_time} sekunder.")
         print(f"Prunede {self.pruning_counter} branches og nåede ned til dybde {self.current_depth}.")
-        print(f"Fand det bedste træk i dybde {self.best_move_in_layer}")
+        print(f"Fandt det bedste træk i dybde {self.best_move_in_layer}")
         #self.board.getAllMovesLegal(WHITE)
         if self.global_best_move is None:
             _legal_moves = self.board.getAllMovesLegal(self.side)
@@ -129,16 +135,21 @@ class CustomAI:
         self.state_counter += 1
         if time.time() - self.start_time >= self.max_time_sec:
             self.timeout = True
-            return self.scoreBoard(board, isWhiteTurn)
+            return self.scoreBoard(board, depth)
         if depth == 0:
-            return self.scoreBoard(board, isWhiteTurn)
+            return self.scoreBoard(board, depth)
         
         # For white aka maximizer
         if isWhiteTurn:
             max_score = -math.inf
             # Loop through all whites moves
-            moves = board.getAllMovesLegal(WHITE)
-            #random.shuffle(moves)
+            if self.total_moves == 0:
+                moves = board.getAllFirstMovesLegal(WHITE)
+            else:
+                moves = board.getAllMovesLegal(WHITE)
+            # if self.current_depth == 1:
+            #     for m in moves:
+            #         print(m)
             for move in moves:
                 board.makeMove(move)
                 score = self.alphaBeta(board, depth - 1, alpha, beta, False)
@@ -148,6 +159,7 @@ class CustomAI:
                     if depth == self.current_depth:
                         if self.side == WHITE:
                             self.best_move = move
+                            print(f"{score} in d={self.current_depth} for {move}")
                 board.undoLastMove()
                 # Pruning
                 alpha = max(alpha, max_score)
@@ -159,8 +171,10 @@ class CustomAI:
         # For black aka minimizer
         else:
             min_score = math.inf
-            moves = board.getAllMovesLegal(BLACK)
-            #random.shuffle(moves)
+            if self.total_moves == 0:
+                moves = board.getAllFirstMovesLegal(BLACK)
+            else:
+                moves = board.getAllMovesLegal(BLACK)
             for move in moves:
                 board.makeMove(move)
                 score = self.alphaBeta(board, depth - 1, alpha, beta, True)
@@ -169,6 +183,7 @@ class CustomAI:
                     if depth == self.current_depth:
                         if self.side == BLACK:
                             self.best_move = move
+                            print(f"{score} for {move}")
                 board.undoLastMove()
                 # Pruning
                 beta = min(beta, min_score)
@@ -178,19 +193,43 @@ class CustomAI:
             return min_score
 
 
+
+    '''
+    Negamax with alpha beta pruning
+    '''
+    def negamax(self, board: Board, depth, alpha, beta, isWhiteTurn):
+        self.state_counter += 1
+        if time.time() - self.start_time >= self.max_time_sec:
+            self.timeout = True
+            return self.scoreBoard(board, isWhiteTurn)
+        if depth == 0:
+            return self.scoreBoard(board, isWhiteTurn)
+        
+        moves = board.getAllMovesLegal(isWhiteTurn)
+        value = -math.inf
+        for move in moves:
+            board.makeMove(move)
+            score = -self.negamax(board, depth-1, -beta, -alpha, not isWhiteTurn)
+            if score > value:
+                value = score
+                if depth == self.current_depth:
+                    if self.side == isWhiteTurn:
+                        self.best_move = move
+            board.undoLastMove()
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                self.pruning_counter += 1
+                break
+        return value
+
+
     '''
     Positive numbers for white. Negative number for black
     '''
-    def scoreBoard(self, board: Board, side: bool):
-        # if side == WHITE:
-        #     return board.getPointAdvantageOfSide(WHITE)
-        # else:
-        #     return board.getPointAdvantageOfSide(BLACK)
-        
-        # if side == WHITE:
-        #     return board.getPointValueOfSide(WHITE)
-        # else:
-        #     return -(board.getPointValueOfSide(BLACK))
-
-        #return board.getPointAdvantageOfSide(WHITE)
-        return board.getPointAdvantageWithTable(WHITE)
+    def scoreBoard(self, board: Board, depth):
+        depth *= 10
+        score = board.getPointAdvantageWithTable(WHITE)
+        if score > 0:
+            return int(score + ((score * depth) / 100))
+        else:
+            return score
