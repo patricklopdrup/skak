@@ -11,7 +11,7 @@ class King (Piece):
 
     stringRep = 'K'
     value = 20000
-    score_table_white = numpy.array([
+    score_table_black = numpy.array([
         [-30,-40,-40,-50,-50,-40,-40,-30],
         [-30,-40,-40,-50,-50,-40,-40,-30],
         [-30,-40,-40,-50,-50,-40,-40,-30],
@@ -22,7 +22,7 @@ class King (Piece):
         [ 20, 30, 10,  0,  0, 10, 30, 20]
     ])
 
-    score_table_black = numpy.array([
+    score_table_white = numpy.array([
         [ 20, 30, 10,  0,  0, 10, 30, 20],
         [ 20, 20,  0,  0,  0,  0, 20, 20],
         [-10,-20,-20,-20,-20,-20,-20,-10],
@@ -42,10 +42,10 @@ class King (Piece):
         # Reverse x and y so it matches the Board
         x = coor[1]
         y = coor[0]
-        if side == WHITE:
-            table_val = self.score_table_white[x,y]
-        else:
+        if side == BLACK:
             table_val = self.score_table_black[x,y]
+        else:
+            table_val = self.score_table_white[x,y]
         return self.value + table_val
 
 

@@ -10,6 +10,7 @@ from InputParser import InputParser
 from Move import Move
 from Piece import Piece
 from debug import *
+from Zobrist import *
 
 WHITE = True
 BLACK = False
@@ -29,9 +30,11 @@ def askForPlayerSide():
         return BLACK
 
 
+'''
+We do not use this function anymore because we use iterative deepening seach and we always start from depth=1
+'''
 def askForDepthOfAI():
-    if debug:
-        return 3
+    return 1
     depthInput = 2
     try:
         depthInput = int(input("How deep should the AI look for moves?\n"
@@ -93,6 +96,9 @@ def startGame(board: Board, playerSide, ai: CustomAI):
     parser = InputParser(board, playerSide)
     ai_parser = InputParser(board, not playerSide)
     total_moves = 0
+
+    # print(f"Hash: {compute_hash(board)}")
+    # print(f"Score: {board.getPointAdvantageWithTable(WHITE)}")
     while True:
         print()
         print(board)
@@ -113,7 +119,6 @@ def startGame(board: Board, playerSide, ai: CustomAI):
             return
 
         if board.currentSide == playerSide:
-            # printPointAdvantage(board)
             if autoplay:
                 move = getRandomMove(board, parser)
             else:
@@ -147,14 +152,14 @@ def startGame(board: Board, playerSide, ai: CustomAI):
             #move = ai.getBestMove()
 
             # For start game move pawn
-            if total_moves == 0:
+            if hard_code_first_move and total_moves == 0:
                 print(ai.side)
                 if ai.side == WHITE:
                     move = ai_parser.parse('e4')
                 else:
                     move = ai_parser.parse('e5')
             else:
-                move = ai.bestMoveMinMax()
+                move = ai.bestMoveMinMax(total_moves)
                 move.notation = parser.notationForMove(move)
             try:
                 makeMove(move, board)
