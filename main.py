@@ -30,9 +30,11 @@ def askForPlayerSide():
         return BLACK
 
 
+'''
+We do not use this function anymore because we use iterative deepening seach and we always start from depth=1
+'''
 def askForDepthOfAI():
-    if debug:
-        return 3
+    return 1
     depthInput = 2
     try:
         depthInput = int(input("How deep should the AI look for moves?\n"
@@ -95,8 +97,8 @@ def startGame(board: Board, playerSide, ai: CustomAI):
     ai_parser = InputParser(board, not playerSide)
     total_moves = 0
 
-    print(f"Hash: {compute_hash(board)}")
-    print(f"Score: {board.getPointAdvantageWithTable(WHITE)}")
+    # print(f"Hash: {compute_hash(board)}")
+    # print(f"Score: {board.getPointAdvantageWithTable(WHITE)}")
     while True:
         print()
         print(board)
