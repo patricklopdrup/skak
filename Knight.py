@@ -11,7 +11,7 @@ class Knight(Piece):
 
     stringRep = 'N'
     value = 320
-    score_table_white = numpy.array([
+    score_table_black = numpy.array([
         [-50,-40,-30,-30,-30,-30,-40,-50],
         [-40,-20,  0,  0,  0,  0,-20,-40],
         [-30,  0, 10, 15, 15, 10,  0,-30],
@@ -22,7 +22,7 @@ class Knight(Piece):
         [-50,-40,-30,-30,-30,-30,-40,-50]
     ])
 
-    score_table_black = numpy.array([
+    score_table_white = numpy.array([
         [-50,-40,-30,-30,-30,-30,-40,-50],
         [-40,-20,  0,  5,  5,  0,-20,-40],
         [-30,  5, 10, 15, 15, 10,  5,-30],
@@ -43,9 +43,9 @@ class Knight(Piece):
         x = coor[1]
         y = coor[0]
         if side == BLACK:
-            table_val = self.score_table_white[x,y]
-        else:
             table_val = self.score_table_black[x,y]
+        else:
+            table_val = self.score_table_white[x,y]
         return self.value + table_val
 
 

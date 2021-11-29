@@ -72,7 +72,7 @@ class CustomAI:
             if self.timeout:
                 break
 
-        print(f"Kiggede på {self.state_counter} spil på {time.time() - self.start_time} sekunder.")
+        print(f"Kiggede på {self.state_counter} gamestates på {time.time() - self.start_time} sekunder.")
         print(f"Prunede {self.pruning_counter} branches og nåede ned til dybde {self.current_depth}.")
         print(f"Fandt det bedste træk i dybde {self.best_move_in_layer}")
         #self.board.getAllMovesLegal(WHITE)
@@ -147,9 +147,6 @@ class CustomAI:
                 moves = board.getAllFirstMovesLegal(WHITE)
             else:
                 moves = board.getAllMovesLegal(WHITE)
-            # if self.current_depth == 1:
-            #     for m in moves:
-            #         print(m)
             for move in moves:
                 board.makeMove(move)
                 score = self.alphaBeta(board, depth - 1, alpha, beta, False)
@@ -159,7 +156,7 @@ class CustomAI:
                     if depth == self.current_depth:
                         if self.side == WHITE:
                             self.best_move = move
-                            print(f"{score} in d={self.current_depth} for {move}")
+                            #print(f"{score} in d={self.current_depth} for {move}")
                 board.undoLastMove()
                 # Pruning
                 alpha = max(alpha, max_score)
@@ -183,7 +180,6 @@ class CustomAI:
                     if depth == self.current_depth:
                         if self.side == BLACK:
                             self.best_move = move
-                            print(f"{score} for {move}")
                 board.undoLastMove()
                 # Pruning
                 beta = min(beta, min_score)
