@@ -143,7 +143,7 @@ class CustomAI:
         if isWhiteTurn:
             max_score = -math.inf
             # Loop through all whites moves
-            if self.total_moves == 0:
+            if self.total_moves <= 1:
                 moves = board.getAllFirstMovesLegal(WHITE)
             else:
                 moves = board.getAllMovesLegal(WHITE)
@@ -168,7 +168,7 @@ class CustomAI:
         # For black aka minimizer
         else:
             min_score = math.inf
-            if self.total_moves == 0:
+            if self.total_moves <= 1:
                 moves = board.getAllFirstMovesLegal(BLACK)
             else:
                 moves = board.getAllMovesLegal(BLACK)
